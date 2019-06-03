@@ -73,7 +73,7 @@ class MockONTAPConnection(object):
 
     @staticmethod
     def build_policy_rule(policy, multiple=False):
-        ''' build xml data for vserser-info '''
+        ''' build xml data for export-rule-info '''
         xml = netapp_utils.zapi.NaElement('xml')
         attributes = {'attributes-list': {
             'export-rule-info': {
@@ -92,7 +92,9 @@ class MockONTAPConnection(object):
                     'security-flavor': 'any'
                 },
                 'is-allow-set-uid-enabled': 'false',
-                'rule-index': policy['rule_index']
+                'rule-index': policy['rule_index'],
+                'anonymous-user-id': policy['anonymous_user_id'],
+
             }
         }, 'num-records': 2 if multiple is True else 1}
         xml.translate_struct(attributes)
@@ -124,7 +126,8 @@ class TestMyModule(unittest.TestCase):
             'name': 'test',
             'protocol': 'nfs',
             'client_match': '1.1.1.0',
-            'rule_index': 10
+            'rule_index': 10,
+            'anonymous_user_id': '65534'
         }
 
     def mock_rule_args(self):
@@ -134,6 +137,7 @@ class TestMyModule(unittest.TestCase):
             'vserver': 'test',
             'protocol': self.mock_rule['protocol'],
             'rule_index': self.mock_rule['rule_index'],
+            'anonymous_user_id': self.mock_rule['anonymous_user_id'],
             'ro_rule': 'any',
             'rw_rule': 'any',
             'hostname': 'test',
